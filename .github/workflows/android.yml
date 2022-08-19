@@ -1,4 +1,4 @@
-name: Experimental workflow: Build RSDKv5 (for Android)
+name: Experimental workflow - Build RSDKv5 (for Android)
 
 on: workflow_dispatch
 
