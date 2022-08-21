@@ -1052,13 +1052,18 @@ void RenderDevice::ProcessEvent(MSG Msg)
         case WM_SYSKEYDOWN: {
             WPARAM activeButtons = Msg.wParam;
             switch (Msg.wParam) {
-                case VK_SHIFT: activeButtons = MapVirtualKey(((Msg.lParam >> 8) & 0xFF), MAPVK_VSC_TO_VK_EX); break;
-
-                case VK_CONTROL: activeButtons = VK_LCONTROL + ((Msg.lParam >> 8) & 1); break;
-
-                case VK_MENU: // ALT key
-                    activeButtons = VK_LMENU + ((Msg.lParam >> 8) & 1);
+                // shift key
+                case VK_SHIFT:
+                    activeButtons = MapVirtualKey(((Msg.lParam >> 16) & 0xFF), MAPVK_VSC_TO_VK_EX);
                     break;
+
+                    // CTRL key
+                case VK_CONTROL:
+                    activeButtons = VK_LCONTROL + (((Msg.lParam >> 24) & 0xFF) & 1);
+                    break;
+
+                    // ALT key
+                case VK_MENU: activeButtons = VK_LMENU + (((Msg.lParam >> 24) & 0xFF) & 1); break;
             }
 
             switch (Msg.wParam) {
@@ -1101,13 +1106,18 @@ void RenderDevice::ProcessEvent(MSG Msg)
         case WM_KEYDOWN: {
             WPARAM activeButtons = Msg.wParam;
             switch (Msg.wParam) {
-                case VK_SHIFT: activeButtons = MapVirtualKey(((Msg.lParam >> 8) & 0xFF), MAPVK_VSC_TO_VK_EX); break;
-
-                case VK_CONTROL: activeButtons = VK_LCONTROL + ((Msg.lParam >> 8) & 1); break;
-
-                case VK_MENU: // ALT key
-                    activeButtons = VK_LMENU + ((Msg.lParam >> 8) & 1);
+                // shift key
+                case VK_SHIFT:
+                    activeButtons = MapVirtualKey(((Msg.lParam >> 16) & 0xFF), MAPVK_VSC_TO_VK_EX);
                     break;
+
+                    // CTRL key
+                case VK_CONTROL:
+                    activeButtons = VK_LCONTROL + (((Msg.lParam >> 24) & 0xFF) & 1);
+                    break;
+
+                    // ALT key
+                case VK_MENU: activeButtons = VK_LMENU + (((Msg.lParam >> 24) & 0xFF) & 1); break;
             }
 
             // handledMsg = true;
@@ -1374,7 +1384,8 @@ LRESULT CALLBACK RenderDevice::WindowEventCallback(HWND hRecipient, UINT message
 
                 if (AudioDevice::audioFocus == 1) {
                     AudioDevice::audioFocus = 0;
-                    AudioDevice::sourceVoice->Start(0, 0);
+                    if (AudioDevice::sourceVoice)
+                        AudioDevice::sourceVoice->Start(0, 0);
                 }
 
                 GetDisplays();
@@ -1392,7 +1403,8 @@ LRESULT CALLBACK RenderDevice::WindowEventCallback(HWND hRecipient, UINT message
 
                 if (!AudioDevice::audioFocus) {
                     AudioDevice::audioFocus = 1;
-                    AudioDevice::sourceVoice->Stop(0, 0);
+                    if (AudioDevice::sourceVoice)
+                        AudioDevice::sourceVoice->Stop(0, 0);
                 }
 
                 videoSettings.windowState = WINDOWSTATE_INACTIVE;
